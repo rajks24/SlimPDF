@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ app_name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        input[type="file"]:hover {
+            border-color: #764ba2;
+            background: #f0f1ff;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .console {
+            margin-top: 30px;
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .console.active {
+            display: block;
+        }
+
+        .console-line {
+            margin-bottom: 5px;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #333;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .quality-info {
+            margin-top: 10px;
+            padding: 12px;
+            background: #fff8e1;
+            border-left: 3px solid #ffc107;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ app_name }}</h1>
+        <p class="subtitle">{{ subtitle }}</p>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="pdfFile">Select PDF File</label>
+                <input type="file" id="pdfFile" name="file" accept=".pdf" required>
+            </div>
+
+            <div class="form-group">
+                <label for="quality">Quality Level</label>
+                <select id="quality" name="quality">
+                    {% for option in quality_options %}
+                    <option value="{{ option.value }}" {% if option.value == default_quality %}selected{% endif %}>
+                        {{ option.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div class="quality-info">
+                    {{ quality_hint|safe }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="outputPath">Output Folder (Optional)</label>
+                <input
+                    type="text"
+                    id="outputPath"
+                    name="output_path"
+                    placeholder="{{ default_output_path }}"
+                    value="{{ default_output_path }}"
+                >
+            </div>
+
+            <button type="submit" id="submitBtn">
+                <span id="btnText">Compress PDF</span>
+            </button>
+        </form>
+
+        <div id="console" class="console"></div>
+
+        <div id="result" class="result">
+            <h3>✅ Compression Complete!</h3>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-label">Original Size</div>
+                    <div class="stat-value" id="originalSize">-</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Compressed Size</div>
+                    <div class="stat-value" id="compressedSize">-</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Reduction</div>
+                    <div class="stat-value" id="reduction">-</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Space Saved</div>
+                    <div class="stat-value" id="saved">-</div>
+                </div>
+            </div>
+            <a href="#" id="downloadLink" class="download-btn">📥 Download Compressed PDF</a>
+            <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                File saved to: <strong id="savePath"></strong>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const consoleDiv = document.getElementById('console');
+        const resultDiv = document.getElementById('result');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+
+        function addConsoleLog(message) {
+            const line = document.createElement('div');
+            line.className = 'console-line';
+            line.textContent = '> ' + message;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            // Reset UI
+            consoleDiv.innerHTML = '';
+            consoleDiv.classList.add('active');
+            resultDiv.classList.remove('active');
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span> Compressing...';
+
+            addConsoleLog('Starting compression...');
+            addConsoleLog('Quality: ' + document.getElementById('quality').value);
+
+            try {
+                const response = await fetch('/compress', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    addConsoleLog('✓ Compression complete!');
+                    addConsoleLog(`Original: ${data.original_size}`);
+                    addConsoleLog(`Compressed: ${data.compressed_size}`);
+                    addConsoleLog(`Reduction: ${data.reduction}%`);
+                    addConsoleLog(`File saved to: ${data.save_path}`);
+
+                    // Update stats
+                    document.getElementById('originalSize').textContent = data.original_size;
+                    document.getElementById('compressedSize').textContent = data.compressed_size;
+                    document.getElementById('reduction').textContent = data.reduction + '%';
+                    document.getElementById('saved').textContent = data.saved;
+                    document.getElementById('savePath').textContent = data.save_path;
+                    document.getElementById('downloadLink').href = '/download/' + data.filename;
+
+                    resultDiv.classList.add('active');
+                } else {
+                    addConsoleLog('✗ Error: ' + data.error);
+                }
+            } catch (error) {
+                addConsoleLog('✗ Error: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = 'Compress PDF';
+            }
+        });
+    </script>
+</body>
+</html>
