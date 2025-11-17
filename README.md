@@ -6,6 +6,11 @@ Simple Flask UI around Ghostscript to shrink PDF files from the browser.
 - Python 3.9+ with `pip`
 - [Ghostscript](https://www.ghostscript.com/) available on your `PATH`
 
+### Install Ghostscript
+- **macOS**: `brew install ghostscript`
+- **Ubuntu/Debian**: `sudo apt install ghostscript`
+- **Windows**: Download the latest MSI from [ghostscript.com/download/gsdnld.html](https://ghostscript.com/releases/index.html), install it, then add the install directory (usually `C:\Program Files\gs\gs10.x\bin`) to your `PATH`.
+
 ## Setup
 ```bash
 python3 -m venv venv
