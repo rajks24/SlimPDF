@@ -128,8 +128,10 @@ if __name__ == '__main__':
     print("🚀 PDF Compressor Web App Starting...")
     print("="*60)
     print("\n📱 Open in your browser:")
-    print("   http://localhost:5000")
+    port = int(os.environ.get("PORT", 5000))
+    host = os.environ.get("HOST", "0.0.0.0")
+    print(f"   http://{host}:{port}")
     print("\n⌨️  Press Ctrl+C to stop the server")
     print("="*60 + "\n")
     
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host=host, port=port)

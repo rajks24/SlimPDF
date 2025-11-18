@@ -35,6 +35,28 @@ python main.py
 
 Then open http://localhost:5000 in your browser.
 
+## Run with Docker
+
+Build the container image (installs Python, Flask, and Ghostscript):
+
+```bash
+docker build -t slim-pdf .
+```
+
+Then run it, publishing port 5000 and (optionally) binding a host folder where compressed PDFs should be copied:
+
+```bash
+mkdir -p ./compressed-pdfs
+docker run --rm -p 5000:5000 \
+  -v "$(pwd)/compressed-pdfs:/data" \
+  -e DEFAULT_OUTPUT_PATH=/data \
+  slim-pdf
+```
+
+Open http://localhost:5000 and use the web UI. The temporary upload directory lives inside the container (`/tmp/pdf_uploads`), while the mounted `/data` folder receives the final compressed PDFs if you provide an output path in the UI.
+
+> **Port already in use?** macOS Control Center and other background apps sometimes grab port 5000. Just map a different host port while keeping the container port 5000, e.g. `docker run --rm -p 8080:5000 …` and browse to http://localhost:8080.
+
 ### Run via `flask`
 
 Set the app once per shell and disable the auto reloader if you prefer a single process:
@@ -68,4 +90,4 @@ Adjust them or override with environment variables (`UPLOAD_FOLDER`, `DEFAULT_OU
 
 - Bundle a sample PDF and lightweight test harness for automated regression checks.
 - Surface compression logs/errors in the UI toast instead of only in the console.
-- Package a Dockerfile for one-command setup across machines.
+- Provide presets for common Ghostscript parameter combinations beyond the built-in `-dPDFSETTINGS`.
