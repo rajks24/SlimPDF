@@ -86,6 +86,8 @@ Adjust them or override with environment variables (`UPLOAD_FOLDER`, `DEFAULT_OU
 3. Optionally change the folder where the compressed copy is copied.
 4. Click **Compress PDF** and wait for the stats/download link to appear.
 
+![Slim-PDF-pdf-compressor.jpg](https://i.postimg.cc/nzjPF9fP/Slim-PDF-pdf-compressor.jpg)
+
 ## Future improvements
 
 - Bundle a sample PDF and lightweight test harness for automated regression checks.

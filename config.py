@@ -4,7 +4,7 @@ import os
 class AppConfig:
     """Centralized configuration for the PDF compressor app."""
 
-    APP_NAME = "📄 PDF Compressor"
+    APP_NAME = "📄 SlimPDF"
     APP_SUBTITLE = "Reduce your PDF file size with ease"
 
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/tmp/pdf_uploads')

@@ -125,7 +125,7 @@ def download(filename):
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("🚀 PDF Compressor Web App Starting...")
+    print("🚀 SlimPDF - PDF Compressor Web App Starting...")
     print("="*60)
     print("\n📱 Open in your browser:")
     port = int(os.environ.get("PORT", 5000))
